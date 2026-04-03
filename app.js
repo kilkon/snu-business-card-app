@@ -35,15 +35,15 @@
     return window.location.origin + window.location.pathname;
   }
 
-  function makeAppUrl(key, card) {
+  function makeAppUrl(key, value) {
     const url = new URL(getBaseUrl());
-    url.searchParams.set(key, encodeCard(card));
+    url.searchParams.set(key, value);
     return url.toString();
   }
 
-  function makeLanguageUrl(card, language) {
+  function makeLanguageUrl(contactId, language) {
     const url = new URL(getBaseUrl());
-    url.searchParams.set("card", encodeCard(card));
+    url.searchParams.set("id", contactId);
     url.searchParams.set("lang", language);
     return url.toString();
   }
@@ -110,25 +110,44 @@
     URL.revokeObjectURL(url);
   }
 
-  function encodeCard(card) {
-    const utf8 = new TextEncoder().encode(JSON.stringify(card));
-    let binary = "";
-    utf8.forEach((byte) => {
-      binary += String.fromCharCode(byte);
-    });
-    return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-  }
+  function loadCardById(contactId) {
+    if (!sheetsWebhookUrl) {
+      return Promise.reject(new Error("Missing sheets webhook URL"));
+    }
 
-  function decodeCard(encoded) {
-    const padded = encoded.replace(/-/g, "+").replace(/_/g, "/");
-    const binary = atob(padded + "===".slice((padded.length + 3) % 4));
-    const bytes = Uint8Array.from(binary, (ch) => ch.charCodeAt(0));
-    return JSON.parse(new TextDecoder().decode(bytes));
+    const callbackName = `jsonpCallback_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    return new Promise((resolve, reject) => {
+      const cleanup = () => {
+        delete window[callbackName];
+        script.remove();
+      };
+
+      window[callbackName] = (payload) => {
+        cleanup();
+        if (!payload || !payload.ok || !payload.record) {
+          reject(new Error("Record not found"));
+          return;
+        }
+        resolve(payload.record);
+      };
+
+      const script = document.createElement("script");
+      const url = new URL(sheetsWebhookUrl);
+      url.searchParams.set("action", "get");
+      url.searchParams.set("id", contactId);
+      url.searchParams.set("callback", callbackName);
+      script.src = url.toString();
+      script.onerror = () => {
+        cleanup();
+        reject(new Error("JSONP request failed"));
+      };
+      document.body.appendChild(script);
+    });
   }
 
   function setResult(card) {
     currentCard = card;
-    const shareUrl = makeAppUrl("card", card);
+    const shareUrl = makeAppUrl("id", card.contact_id);
     const qrSrc = `${config.qrApiBase}${encodeURIComponent(shareUrl)}`;
     qrImage.src = qrSrc;
     shareUrlNode.textContent = shareUrl;
@@ -145,8 +164,8 @@
     currentCard = card;
     choiceKr.innerHTML = `${card.name_kr}<br>${card.title_kr}<br>${card.org_kr}<br>${card.phone_mobile} / ${card.email}`;
     choiceEn.innerHTML = `${card.name_en}<br>${card.title_en}<br>${card.org_en}<br>${card.phone_mobile} / ${card.email}`;
-    choiceKrBtn.href = makeLanguageUrl(card, "kr");
-    choiceEnBtn.href = makeLanguageUrl(card, "en");
+    choiceKrBtn.href = makeLanguageUrl(card.contact_id, "kr");
+    choiceEnBtn.href = makeLanguageUrl(card.contact_id, "en");
     setActiveView("choice");
   }
 
@@ -183,49 +202,43 @@
     const formData = new FormData(form);
     const payload = buildPayload(formData);
     saveToSheets(payload).finally(() => {
-      window.history.pushState({}, "", makeAppUrl("result", payload));
+      window.history.pushState({}, "", getBaseUrl());
       setResult(payload);
     });
   }
 
   function handleRoute() {
     const params = new URLSearchParams(window.location.search);
-    const cardValue = params.get("card");
-    const resultValue = params.get("result");
+    const contactId = params.get("id");
     const langValue = params.get("lang");
 
-    if (!cardValue && !resultValue) {
+    if (!contactId) {
       setActiveView("form");
       return;
     }
 
-    try {
-      if (cardValue) {
-        const card = decodeCard(cardValue);
+    loadCardById(contactId)
+      .then((card) => {
+        setResult(card);
         setChoice(card);
         if (langValue === "kr" || langValue === "en") {
           window.setTimeout(() => {
             downloadVcard(card, langValue);
           }, 120);
         }
-        return;
-      }
-      if (resultValue) {
-        const card = decodeCard(resultValue);
-        setResult(card);
-        return;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-
-    setActiveView("form");
+      })
+      .catch((error) => {
+        console.error(error);
+        choiceKr.innerHTML = "명함 정보를 불러오지 못했습니다.";
+        choiceEn.innerHTML = "Please try again later.";
+        setActiveView("choice");
+      });
   }
 
   form.addEventListener("submit", handleSubmit);
   copyShareLink.addEventListener("click", async () => {
     if (!currentCard) return;
-    const shareUrl = makeAppUrl("card", currentCard);
+    const shareUrl = makeAppUrl("id", currentCard.contact_id);
     await navigator.clipboard.writeText(shareUrl);
     copyShareLink.textContent = "복사 완료";
     window.setTimeout(() => {
