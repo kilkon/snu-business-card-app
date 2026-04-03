@@ -152,6 +152,39 @@
     showEnQr.classList.toggle("ghost", language !== "en");
   }
 
+  async function saveQrImage() {
+    if (!currentQrImageUrl) return;
+
+    const fileName = currentQrLanguage === "en" ? "english-contact-qr.png" : "korean-contact-qr.png";
+
+    try {
+      const response = await fetch(currentQrImageUrl, { cache: "no-store" });
+      if (!response.ok) throw new Error("Failed to fetch QR image");
+
+      const blob = await response.blob();
+      const file = new File([blob], fileName, { type: blob.type || "image/png" });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+        await navigator.share({
+          title: fileName,
+          files: [file]
+        });
+        return;
+      }
+
+      const objectUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = objectUrl;
+      anchor.download = fileName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+    } catch (error) {
+      window.open(currentQrImageUrl, "_blank", "noopener");
+    }
+  }
+
   function setResult(card) {
     currentCard = card;
     renderQrForLanguage(card, currentQrLanguage);
@@ -189,16 +222,7 @@
   downloadEn.addEventListener("click", () => currentCard && downloadVcard(currentCard, "en"));
   showKrQr.addEventListener("click", () => currentCard && renderQrForLanguage(currentCard, "kr"));
   showEnQr.addEventListener("click", () => currentCard && renderQrForLanguage(currentCard, "en"));
-  downloadQrImage.addEventListener("click", () => {
-    if (!currentQrImageUrl) return;
-    const anchor = document.createElement("a");
-    anchor.href = currentQrImageUrl;
-    anchor.download = currentQrLanguage === "en" ? "english-contact-qr.png" : "korean-contact-qr.png";
-    anchor.target = "_blank";
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-  });
+  downloadQrImage.addEventListener("click", saveQrImage);
   makeAnother.addEventListener("click", () => {
     currentCard = null;
     currentQrLanguage = "kr";
