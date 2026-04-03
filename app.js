@@ -115,6 +115,34 @@
       .trim();
   }
 
+  function getSnuSealMarkup() {
+    return `
+      <svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="118" height="118" rx="6" fill="#ffffff"/>
+        <g fill="none" stroke="#24398d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M27 86c-10-11-15-26-15-42 0-3 0-6 1-9"/>
+          <path d="M22 28c4-8 10-15 18-20"/>
+          <path d="M93 86c10-11 15-26 15-42 0-3 0-6-1-9"/>
+          <path d="M98 28c-4-8-10-15-18-20"/>
+          <path d="M26 73c5 5 10 9 16 12"/>
+          <path d="M28 63c4 4 8 7 13 10"/>
+          <path d="M31 53c3 3 7 6 11 8"/>
+          <path d="M94 73c-5 5-10 9-16 12"/>
+          <path d="M92 63c-4 4-8 7-13 10"/>
+          <path d="M89 53c-3 3-7 6-11 8"/>
+        </g>
+        <rect x="42" y="20" width="36" height="49" rx="4" fill="#24398d"/>
+        <path d="M60 14l9 8H51l9-8z" fill="#24398d"/>
+        <path d="M54 30h12M54 38h12M54 46h12" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+        <path d="M50 56h20" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M60 22v34" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+        <text x="60" y="85" text-anchor="middle" font-size="11" font-weight="700" fill="#24398d" font-family="Georgia, serif">VERI</text>
+        <text x="60" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#24398d" font-family="Georgia, serif">LUX</text>
+        <text x="60" y="107" text-anchor="middle" font-size="11" font-weight="700" fill="#24398d" font-family="Georgia, serif">MEA</text>
+      </svg>
+    `;
+  }
+
   function getLocalizedCard(card, language) {
     const useEn = language === "en";
     return {
@@ -239,10 +267,7 @@
   function renderBusinessCardSamples(card) {
     const localized = getLocalizedCard(card, currentQrLanguage);
     const qrUrl = buildQrUrl(card, currentQrLanguage);
-    const logoUrl = config.snuLogoUrl || "";
-    const logoMarkup = logoUrl
-      ? `<img src="${escapeHtml(logoUrl)}" alt="서울대학교 로고">`
-      : `<span>SNU</span>`;
+    const logoMarkup = getSnuSealMarkup();
 
     businessCardGallery.innerHTML = sampleThemes.map((theme) => `
       <article class="${theme.className}">
