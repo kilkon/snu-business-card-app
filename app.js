@@ -1,6 +1,5 @@
 (function () {
   const config = window.APP_CONFIG || {};
-  const sheetsWebhookUrl = (config.sheetsWebhookUrl || "").trim();
 
   const views = {
     form: document.getElementById("formView"),
@@ -139,41 +138,6 @@
     URL.revokeObjectURL(url);
   }
 
-  function loadCardById(contactId) {
-    if (!sheetsWebhookUrl) {
-      return Promise.reject(new Error("Missing sheets webhook URL"));
-    }
-
-    const callbackName = `jsonpCallback_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    return new Promise((resolve, reject) => {
-      const cleanup = () => {
-        delete window[callbackName];
-        script.remove();
-      };
-
-      window[callbackName] = (payload) => {
-        cleanup();
-        if (!payload || !payload.ok || !payload.record) {
-          reject(new Error("Record not found"));
-          return;
-        }
-        resolve(payload.record);
-      };
-
-      const script = document.createElement("script");
-      const url = new URL(sheetsWebhookUrl);
-      url.searchParams.set("action", "get");
-      url.searchParams.set("id", contactId);
-      url.searchParams.set("callback", callbackName);
-      script.src = url.toString();
-      script.onerror = () => {
-        cleanup();
-        reject(new Error("JSONP request failed"));
-      };
-      document.body.appendChild(script);
-    });
-  }
-
   function renderQrForLanguage(card, language) {
     currentQrLanguage = language;
     const qrPayload = buildMeCard(card, language);
@@ -206,35 +170,13 @@
     return payload;
   }
 
-  function saveToSheets(payload) {
-    if (!sheetsWebhookUrl) {
-      saveNotice.textContent = "현재는 Google Sheets 저장 주소가 비어 있어 QR만 생성됩니다. config.js에 웹앱 URL을 넣으면 시트 저장이 함께 동작합니다.";
-      return Promise.resolve();
-    }
-
-    saveNotice.textContent = "Google Sheets에 저장 요청을 보내는 중입니다.";
-    return fetch(sheetsWebhookUrl, {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-      },
-      body: new URLSearchParams(payload).toString()
-    }).then(() => {
-      saveNotice.textContent = "Google Sheets 저장 요청이 전송되었습니다.";
-    }).catch(() => {
-      saveNotice.textContent = "Google Sheets 저장 요청은 실패했지만 QR 생성은 계속 사용할 수 있습니다.";
-    });
-  }
-
   function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(form);
     const payload = buildPayload(formData);
-    saveToSheets(payload).finally(() => {
-      window.history.pushState({}, "", getBaseUrl());
-      setResult(payload);
-    });
+    saveNotice.textContent = "입력 정보는 브라우저 안에서만 사용되며 외부로 전송되지 않습니다.";
+    window.history.pushState({}, "", getBaseUrl());
+    setResult(payload);
   }
 
   function handleRoute() {
