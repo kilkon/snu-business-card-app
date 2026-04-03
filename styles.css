@@ -270,6 +270,16 @@ button {
   box-shadow: 0 18px 40px rgba(16, 25, 51, 0.12);
 }
 
+.sample-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 18px 18px;
+}
+
+.sample-save-button {
+  min-width: 132px;
+}
+
 .sample-card-body {
   height: 100%;
   padding: 18px 22px;

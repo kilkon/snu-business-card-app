@@ -274,8 +274,48 @@
           <div class="sample-address">${escapeHtml(localized.address)}</div>
           <div class="sample-footer-line">${escapeHtml(theme.footer)}</div>
         </div>
+        <div class="sample-actions">
+          <button class="button secondary sample-save-button" type="button" data-sample-key="${escapeHtml(theme.key)}">이 시안 저장</button>
+        </div>
       </article>
     `).join("");
+  }
+
+  async function saveSampleCard(button) {
+    const cardNode = button.closest(".sample-card");
+    if (!cardNode) return;
+
+    if (!window.html2canvas) {
+      window.alert("이미지 저장 라이브러리를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.");
+      return;
+    }
+
+    const key = button.getAttribute("data-sample-key") || "snu-card";
+    const previousText = button.textContent;
+    button.disabled = true;
+    button.textContent = "이미지 생성 중...";
+
+    try {
+      const canvas = await window.html2canvas(cardNode, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
+
+      const dataUrl = canvas.toDataURL("image/png");
+      const anchor = document.createElement("a");
+      anchor.href = dataUrl;
+      anchor.download = `${key}-${currentQrLanguage}.png`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+    } catch (error) {
+      window.alert("이미지 저장에 실패했습니다. 다시 시도해 주세요.");
+    } finally {
+      button.disabled = false;
+      button.textContent = previousText;
+    }
   }
 
   function setResult(card) {
@@ -322,6 +362,11 @@
     samplesBuilt = true;
     renderBusinessCardSamples(currentCard);
     businessCardGallery.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  businessCardGallery.addEventListener("click", (event) => {
+    const button = event.target.closest(".sample-save-button");
+    if (!button) return;
+    saveSampleCard(button);
   });
   makeAnother.addEventListener("click", () => {
     currentCard = null;
