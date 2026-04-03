@@ -83,7 +83,7 @@
         <div>
           <h2>QR 생성 완료</h2>
           <p class="muted">이 QR을 스캔하면 국문 또는 영문 연락처 저장 중 하나를 선택할 수 있습니다.</p>
-          <img id="qrImage" class="qr-image" alt="QR code">
+          <div id="qrImage" class="qr-image" aria-label="QR code"></div>
           <div class="button-row">
             <a id="openChoiceLink" class="button primary" target="_blank" rel="noreferrer">선택 페이지 열기</a>
           </div>
@@ -123,6 +123,7 @@
     </section>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="./config.js"></script>
   <script src="./app.js"></script>
 </body>

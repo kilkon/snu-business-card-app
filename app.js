@@ -146,8 +146,17 @@
   function setResult(card) {
     currentCard = card;
     const shareUrl = makeAppUrl("id", card.contact_id);
-    const qrSrc = `${config.qrApiBase}${encodeURIComponent(shareUrl)}`;
-    qrImage.src = qrSrc;
+    qrImage.innerHTML = "";
+    if (window.QRCode) {
+      new window.QRCode(qrImage, {
+        text: shareUrl,
+        width: 320,
+        height: 320,
+        correctLevel: window.QRCode.CorrectLevel.M
+      });
+    } else {
+      qrImage.textContent = "QR 생성기를 불러오지 못했습니다.";
+    }
     openChoiceLink.href = shareUrl;
     summaryBox.innerHTML = [
       `<strong>국문</strong><br>${card.name_kr} / ${card.title_kr} / ${card.org_kr}`,

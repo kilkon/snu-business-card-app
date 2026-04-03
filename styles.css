@@ -200,8 +200,16 @@ button {
   max-width: 340px;
   border-radius: 20px;
   background: #fff;
-  display: block;
+  display: grid;
+  place-items: center;
+  min-height: 340px;
   margin: 0 auto 16px;
+}
+
+.qr-image img,
+.qr-image canvas {
+  max-width: 100%;
+  height: auto;
 }
 
 .link-box,
