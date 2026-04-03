@@ -239,7 +239,7 @@
   function renderBusinessCardSamples(card) {
     const localized = getLocalizedCard(card, currentQrLanguage);
     const qrUrl = buildQrUrl(card, currentQrLanguage);
-    const logoMarkup = `<img src="./assets/snu-emblem.svg" alt="서울대학교 문장형 엠블럼">`;
+    const logoMarkup = `<img src="./assets/snu-horizontal-logo.svg" alt="서울대학교 가로형 로고">`;
 
     businessCardGallery.innerHTML = sampleThemes.map((theme) => `
       <article class="${theme.className}">
