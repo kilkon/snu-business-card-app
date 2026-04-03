@@ -41,6 +41,13 @@
     return url.toString();
   }
 
+  function makeLanguageUrl(card, language) {
+    const url = new URL(getBaseUrl());
+    url.searchParams.set("card", encodeCard(card));
+    url.searchParams.set("lang", language);
+    return url.toString();
+  }
+
   function makeId() {
     return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   }
@@ -138,6 +145,8 @@
     currentCard = card;
     choiceKr.innerHTML = `${card.name_kr}<br>${card.title_kr}<br>${card.org_kr}<br>${card.phone_mobile} / ${card.email}`;
     choiceEn.innerHTML = `${card.name_en}<br>${card.title_en}<br>${card.org_en}<br>${card.phone_mobile} / ${card.email}`;
+    choiceKrBtn.href = makeLanguageUrl(card, "kr");
+    choiceEnBtn.href = makeLanguageUrl(card, "en");
     setActiveView("choice");
   }
 
@@ -183,6 +192,7 @@
     const params = new URLSearchParams(window.location.search);
     const cardValue = params.get("card");
     const resultValue = params.get("result");
+    const langValue = params.get("lang");
 
     if (!cardValue && !resultValue) {
       setActiveView("form");
@@ -193,6 +203,11 @@
       if (cardValue) {
         const card = decodeCard(cardValue);
         setChoice(card);
+        if (langValue === "kr" || langValue === "en") {
+          window.setTimeout(() => {
+            downloadVcard(card, langValue);
+          }, 120);
+        }
         return;
       }
       if (resultValue) {
@@ -226,8 +241,6 @@
     form.reset();
     setActiveView("form");
   });
-  choiceKrBtn.addEventListener("click", () => currentCard && downloadVcard(currentCard, "kr"));
-  choiceEnBtn.addEventListener("click", () => currentCard && downloadVcard(currentCard, "en"));
 
   window.addEventListener("popstate", handleRoute);
   handleRoute();
