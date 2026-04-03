@@ -176,19 +176,10 @@
     currentQrLanguage = language;
     const qrPayload = buildMeCard(card, language);
     qrImage.innerHTML = "";
-    if (window.QRCode) {
-      new window.QRCode(qrImage, {
-        text: qrPayload,
-        width: 320,
-        height: 320,
-        correctLevel: window.QRCode.CorrectLevel.M
-      });
-    } else {
-      const fallbackImage = document.createElement("img");
-      fallbackImage.alt = "QR code";
-      fallbackImage.src = `${config.qrApiBase}${encodeURIComponent(qrPayload)}`;
-      qrImage.appendChild(fallbackImage);
-    }
+    const image = document.createElement("img");
+    image.alt = "QR code";
+    image.src = `${config.qrApiBase}${encodeURIComponent(qrPayload)}`;
+    qrImage.appendChild(image);
     qrModeLabel.textContent = language === "kr" ? "현재: 국문 연락처 QR" : "현재: 영문 연락처 QR";
     showKrQr.classList.toggle("ghost", language !== "kr");
     showEnQr.classList.toggle("ghost", language !== "en");
