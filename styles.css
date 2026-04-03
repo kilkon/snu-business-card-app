@@ -34,9 +34,25 @@ body {
   padding: 28px;
   box-shadow: 0 22px 50px rgba(16, 25, 51, 0.18);
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1fr;
   gap: 20px;
-  align-items: end;
+  align-items: start;
+}
+
+.hero-logo {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 24px rgba(11, 20, 52, 0.16);
+}
+
+.hero-logo img {
+  display: block;
+  width: min(100%, 360px);
+  height: auto;
 }
 
 .eyebrow {
