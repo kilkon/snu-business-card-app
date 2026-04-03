@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>명함 저장 선택</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Malgun Gothic", sans-serif;
+      background: linear-gradient(180deg, #1a255e 0%, #32489d 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+    .panel {
+      width: min(760px, 100%);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 30px;
+      padding: 28px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.12;
+    }
+    p {
+      margin: 0 0 16px;
+      color: #d8e1ff;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+    .choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .choice {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .choice h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+    .name {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .info {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #f4f6ff;
+      margin-bottom: 18px;
+    }
+    .button {
+      display: inline-block;
+      text-decoration: none;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      background: #d9c27b;
+      color: #1e2d78;
+    }
+    @media (max-width: 760px) {
+      .choice-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <h1>어떤 명함을 저장하시겠습니까?</h1>
+    <p>서울대학교 교수형 QR 명함입니다. 원하는 언어를 선택하면 연락처 파일이 다운로드되고, 휴대폰에서 열어 주소록에 저장할 수 있습니다.</p>
+    <section class="choice-grid">
+      <article class="choice">
+        <h2>국문 명함</h2>
+        <div class="name">{{ contact.name_kr }}</div>
+        <div class="info">
+          {{ contact.title_kr }}<br>
+          {{ contact.org_kr }}<br>
+          {{ contact.phone_mobile }} / {{ contact.email }}
+        </div>
+        <a class="button" href="{{ url_for('download_vcf', contact_id=contact_id, language='kr') }}">국문 연락처 저장</a>
+      </article>
+      <article class="choice">
+        <h2>English Card</h2>
+        <div class="name">{{ contact.name_en }}</div>
+        <div class="info">
+          {{ contact.title_en }}<br>
+          {{ contact.org_en }}<br>
+          {{ contact.phone_mobile }} / {{ contact.email }}
+        </div>
+        <a class="button" href="{{ url_for('download_vcf', contact_id=contact_id, language='en') }}">Save English Contact</a>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
