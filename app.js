@@ -10,6 +10,7 @@
   const form = document.getElementById("cardForm");
   const saveNotice = document.getElementById("saveNotice");
   const qrImage = document.getElementById("qrImage");
+  const downloadQrImage = document.getElementById("downloadQrImage");
   const summaryBox = document.getElementById("summaryBox");
   const qrModeLabel = document.getElementById("qrModeLabel");
   const showKrQr = document.getElementById("showKrQr");
@@ -20,6 +21,7 @@
 
   let currentCard = null;
   let currentQrLanguage = "kr";
+  let currentQrImageUrl = "";
 
   function setActiveView(name) {
     Object.entries(views).forEach(([key, node]) => {
@@ -175,10 +177,11 @@
   function renderQrForLanguage(card, language) {
     currentQrLanguage = language;
     const qrPayload = buildMeCard(card, language);
+    currentQrImageUrl = `${config.qrApiBase}${encodeURIComponent(qrPayload)}`;
     qrImage.innerHTML = "";
     const image = document.createElement("img");
     image.alt = "QR code";
-    image.src = `${config.qrApiBase}${encodeURIComponent(qrPayload)}`;
+    image.src = currentQrImageUrl;
     qrImage.appendChild(image);
     qrModeLabel.textContent = language === "kr" ? "현재: 국문 연락처 QR" : "현재: 영문 연락처 QR";
     showKrQr.classList.toggle("ghost", language !== "kr");
@@ -244,9 +247,20 @@
   downloadEn.addEventListener("click", () => currentCard && downloadVcard(currentCard, "en"));
   showKrQr.addEventListener("click", () => currentCard && renderQrForLanguage(currentCard, "kr"));
   showEnQr.addEventListener("click", () => currentCard && renderQrForLanguage(currentCard, "en"));
+  downloadQrImage.addEventListener("click", () => {
+    if (!currentQrImageUrl) return;
+    const anchor = document.createElement("a");
+    anchor.href = currentQrImageUrl;
+    anchor.download = currentQrLanguage === "en" ? "english-contact-qr.png" : "korean-contact-qr.png";
+    anchor.target = "_blank";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+  });
   makeAnother.addEventListener("click", () => {
     currentCard = null;
     currentQrLanguage = "kr";
+    currentQrImageUrl = "";
     window.history.pushState({}, "", getBaseUrl());
     form.reset();
     setActiveView("form");
