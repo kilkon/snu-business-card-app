@@ -245,7 +245,7 @@ def download_vcf(contact_id: str, language: str):
     return Response(
         vcard_text,
         mimetype="text/vcard",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={"Content-Disposition": f'attachment; filename=\"{filename}\"'},
     )
 
 
