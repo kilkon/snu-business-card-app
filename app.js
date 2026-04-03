@@ -155,7 +155,10 @@
         correctLevel: window.QRCode.CorrectLevel.M
       });
     } else {
-      qrImage.textContent = "QR 생성기를 불러오지 못했습니다.";
+      const fallbackImage = document.createElement("img");
+      fallbackImage.alt = "QR code";
+      fallbackImage.src = `${config.qrApiBase}${encodeURIComponent(shareUrl)}`;
+      qrImage.appendChild(fallbackImage);
     }
     openChoiceLink.href = shareUrl;
     summaryBox.innerHTML = [
