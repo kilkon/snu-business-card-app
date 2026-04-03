@@ -35,6 +35,12 @@
     return window.location.origin + window.location.pathname;
   }
 
+  function makeAppUrl(key, card) {
+    const url = new URL(getBaseUrl());
+    url.searchParams.set(key, encodeCard(card));
+    return url.toString();
+  }
+
   function makeId() {
     return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   }
@@ -113,13 +119,9 @@
     return JSON.parse(new TextDecoder().decode(bytes));
   }
 
-  function getShareUrl(card) {
-    return `${getBaseUrl()}#card=${encodeCard(card)}`;
-  }
-
   function setResult(card) {
     currentCard = card;
-    const shareUrl = getShareUrl(card);
+    const shareUrl = makeAppUrl("card", card);
     const qrSrc = `${config.qrApiBase}${encodeURIComponent(shareUrl)}`;
     qrImage.src = qrSrc;
     shareUrlNode.textContent = shareUrl;
@@ -172,31 +174,29 @@
     const formData = new FormData(form);
     const payload = buildPayload(formData);
     saveToSheets(payload).finally(() => {
-      window.location.hash = `result=${encodeCard(payload)}`;
+      window.history.pushState({}, "", makeAppUrl("result", payload));
       setResult(payload);
     });
   }
 
   function handleRoute() {
-    const hash = window.location.hash.replace(/^#/, "");
-    if (!hash) {
-      setActiveView("form");
-      return;
-    }
+    const params = new URLSearchParams(window.location.search);
+    const cardValue = params.get("card");
+    const resultValue = params.get("result");
 
-    const [key, value] = hash.split("=");
-    if (!value) {
+    if (!cardValue && !resultValue) {
       setActiveView("form");
       return;
     }
 
     try {
-      const card = decodeCard(value);
-      if (key === "card") {
+      if (cardValue) {
+        const card = decodeCard(cardValue);
         setChoice(card);
         return;
       }
-      if (key === "result") {
+      if (resultValue) {
+        const card = decodeCard(resultValue);
         setResult(card);
         return;
       }
@@ -210,7 +210,7 @@
   form.addEventListener("submit", handleSubmit);
   copyShareLink.addEventListener("click", async () => {
     if (!currentCard) return;
-    const shareUrl = getShareUrl(currentCard);
+    const shareUrl = makeAppUrl("card", currentCard);
     await navigator.clipboard.writeText(shareUrl);
     copyShareLink.textContent = "복사 완료";
     window.setTimeout(() => {
@@ -222,13 +222,13 @@
   downloadEn.addEventListener("click", () => currentCard && downloadVcard(currentCard, "en"));
   makeAnother.addEventListener("click", () => {
     currentCard = null;
-    window.location.hash = "";
+    window.history.pushState({}, "", getBaseUrl());
     form.reset();
     setActiveView("form");
   });
   choiceKrBtn.addEventListener("click", () => currentCard && downloadVcard(currentCard, "kr"));
   choiceEnBtn.addEventListener("click", () => currentCard && downloadVcard(currentCard, "en"));
 
-  window.addEventListener("hashchange", handleRoute);
+  window.addEventListener("popstate", handleRoute);
   handleRoute();
 })();
