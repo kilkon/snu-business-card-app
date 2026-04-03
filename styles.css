@@ -255,6 +255,10 @@ button {
   gap: 18px;
 }
 
+.featured {
+  grid-column: 1 / -1;
+}
+
 .sample-card {
   position: relative;
   border-radius: 26px;
@@ -282,6 +286,114 @@ button {
   padding: 18px;
   display: grid;
   gap: 14px;
+}
+
+.official-horizontal {
+  color: #18255f;
+  background:
+    linear-gradient(90deg, #ffffff 0 100%);
+}
+
+.official-horizontal .sample-meta {
+  background: linear-gradient(90deg, rgba(24, 37, 95, 0.06), rgba(24, 37, 95, 0.12));
+}
+
+.official-horizontal .sample-card-body {
+  gap: 18px;
+  padding: 22px 24px 18px;
+}
+
+.official-top {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.official-mark {
+  display: flex;
+  align-items: flex-start;
+}
+
+.official-badge {
+  width: 128px;
+  aspect-ratio: 1;
+  border-radius: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #202f7a 0%, #1a2663 100%);
+  color: #e7d18a;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  box-shadow: inset 0 0 0 1px rgba(231, 209, 138, 0.15);
+}
+
+.official-identity h3 {
+  margin: 8px 0 14px;
+  font-size: 42px;
+  line-height: 1.05;
+  letter-spacing: 0.12em;
+}
+
+.official-bottom {
+  display: grid;
+  grid-template-columns: 1fr 130px;
+  gap: 22px;
+  align-items: end;
+}
+
+.official-contact {
+  display: grid;
+  gap: 5px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.official-contact p {
+  margin: 0;
+}
+
+.official-contact strong {
+  display: inline-block;
+  min-width: 60px;
+}
+
+.official-qr {
+  width: 130px;
+  min-width: 130px;
+  border: 1px solid rgba(24, 37, 95, 0.08);
+}
+
+.official-footer {
+  position: relative;
+  margin-top: 4px;
+  margin-left: -24px;
+  margin-right: -24px;
+  padding: 12px 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.official-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -18px;
+  height: 22px;
+  background: linear-gradient(90deg, #efe3b4 0 18%, #202f7a 18% 100%);
+  z-index: 0;
+}
+
+.official-footer span {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 2px;
 }
 
 .sample-brand {
@@ -497,12 +609,22 @@ button {
 @media (max-width: 980px) {
   .business-card-gallery,
   .sample-main,
-  .sample-contact {
+  .sample-contact,
+  .official-top,
+  .official-bottom {
     grid-template-columns: 1fr;
   }
 
   .sample-qr-wrap {
     width: 132px;
+  }
+
+  .official-badge {
+    width: 112px;
+  }
+
+  .official-identity h3 {
+    font-size: 32px;
   }
 }
 

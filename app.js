@@ -27,11 +27,12 @@
 
   const sampleThemes = [
     {
-      key: "classic",
-      label: "공식 기관형",
-      accent: "남색·금색",
-      className: "sample-card classic",
-      tagline: "Intellectual Pioneer"
+      key: "official-horizontal",
+      label: "공식 서식 참고형",
+      accent: "Pantone 2748c 계열",
+      className: "sample-card official-horizontal featured",
+      tagline: "앞면 국문 · 가로형 90x50 비율",
+      layout: "official"
     },
     {
       key: "crimson",
@@ -229,43 +230,81 @@
     const qrUrl = buildQrUrl(card, currentQrLanguage);
 
     businessCardGallery.innerHTML = sampleThemes.map((theme) => `
-      <article class="${theme.className}">
-        <div class="sample-meta">
-          <span>${escapeHtml(theme.label)}</span>
-          <strong>${escapeHtml(theme.accent)}</strong>
-        </div>
-        <div class="sample-card-body">
-          <div class="sample-brand">
-            <div class="sample-badge">
-              <span>SNU</span>
+      ${theme.layout === "official" ? `
+        <article class="${theme.className}">
+          <div class="sample-meta">
+            <span>${escapeHtml(theme.label)}</span>
+            <strong>${escapeHtml(theme.accent)}</strong>
+          </div>
+          <div class="sample-card-body">
+            <div class="official-top">
+              <div class="official-mark">
+                <div class="official-badge">SNU</div>
+              </div>
+              <div class="official-identity">
+                <h3>${escapeHtml(localized.name)}</h3>
+                <p class="sample-title">${escapeHtml(localized.title)}</p>
+                <p class="sample-org">${escapeHtml(localized.org)}</p>
+              </div>
             </div>
-            <div class="sample-brand-copy">
-              <strong>SEOUL NATIONAL UNIVERSITY</strong>
+            <div class="official-bottom">
+              <div class="official-contact">
+                <p><strong>Address</strong> ${escapeHtml(localized.address)}</p>
+                <p><strong>Tel</strong> ${escapeHtml(card.phone_office || "-")}</p>
+                <p><strong>Mobile</strong> ${escapeHtml(card.phone_mobile)}</p>
+                <p><strong>E-mail</strong> ${escapeHtml(card.email)}</p>
+                <p><strong>Web</strong> ${escapeHtml(card.website || "-")}</p>
+              </div>
+              <div class="sample-qr-wrap official-qr">
+                <img src="${escapeHtml(qrUrl)}" alt="명함 QR">
+                <span>${currentQrLanguage === "kr" ? "국문 연락처 저장 QR" : "English contact QR"}</span>
+              </div>
+            </div>
+            <div class="official-footer">
               <span>${escapeHtml(theme.tagline)}</span>
+              <span>Seoul National University</span>
             </div>
           </div>
-          <div class="sample-main">
-            <div class="sample-person">
-              <h3>${escapeHtml(localized.name)}</h3>
-              <p class="sample-secondary-name">${escapeHtml(localized.secondaryName)}</p>
-              <p class="sample-title">${escapeHtml(localized.title)}</p>
-              <p class="sample-org">${escapeHtml(localized.org)}</p>
-            </div>
-            <div class="sample-qr-wrap">
-              <img src="${escapeHtml(qrUrl)}" alt="명함 QR">
-              <span>${currentQrLanguage === "kr" ? "국문 연락처 저장 QR" : "English contact QR"}</span>
-            </div>
+        </article>
+      ` : `
+        <article class="${theme.className}">
+          <div class="sample-meta">
+            <span>${escapeHtml(theme.label)}</span>
+            <strong>${escapeHtml(theme.accent)}</strong>
           </div>
-          <div class="sample-divider"></div>
-          <div class="sample-contact">
-            <p><strong>M</strong> ${escapeHtml(card.phone_mobile)}</p>
-            <p><strong>T</strong> ${escapeHtml(card.phone_office || "-")}</p>
-            <p><strong>E</strong> ${escapeHtml(card.email)}</p>
-            <p><strong>W</strong> ${escapeHtml(card.website || "-")}</p>
+          <div class="sample-card-body">
+            <div class="sample-brand">
+              <div class="sample-badge">
+                <span>SNU</span>
+              </div>
+              <div class="sample-brand-copy">
+                <strong>SEOUL NATIONAL UNIVERSITY</strong>
+                <span>${escapeHtml(theme.tagline)}</span>
+              </div>
+            </div>
+            <div class="sample-main">
+              <div class="sample-person">
+                <h3>${escapeHtml(localized.name)}</h3>
+                <p class="sample-secondary-name">${escapeHtml(localized.secondaryName)}</p>
+                <p class="sample-title">${escapeHtml(localized.title)}</p>
+                <p class="sample-org">${escapeHtml(localized.org)}</p>
+              </div>
+              <div class="sample-qr-wrap">
+                <img src="${escapeHtml(qrUrl)}" alt="명함 QR">
+                <span>${currentQrLanguage === "kr" ? "국문 연락처 저장 QR" : "English contact QR"}</span>
+              </div>
+            </div>
+            <div class="sample-divider"></div>
+            <div class="sample-contact">
+              <p><strong>M</strong> ${escapeHtml(card.phone_mobile)}</p>
+              <p><strong>T</strong> ${escapeHtml(card.phone_office || "-")}</p>
+              <p><strong>E</strong> ${escapeHtml(card.email)}</p>
+              <p><strong>W</strong> ${escapeHtml(card.website || "-")}</p>
+            </div>
+            <div class="sample-address">${escapeHtml(localized.address)}</div>
           </div>
-          <div class="sample-address">${escapeHtml(localized.address)}</div>
-        </div>
-      </article>
+        </article>
+      `}
     `).join("");
   }
 
