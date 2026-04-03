@@ -237,57 +237,64 @@
   }
 
   function renderBusinessCardSamples(card) {
-    businessCardGallery.innerHTML = sampleThemes.map((theme) => ["kr", "en"].map((language) => {
-      const localized = getLocalizedCard(card, language);
-      const qrUrl = buildQrUrl(card, language);
-      const isEnglish = language === "en";
-      const logoMarkup = isEnglish
-        ? `<img src="./assets/snu-english-logo.png" alt="Seoul National University English logo">`
-        : `<img src="./assets/snu-horizontal-logo.png" alt="서울대학교 가로형 로고">`;
+    businessCardGallery.innerHTML = sampleThemes.map((theme) => {
+      const pairMarkup = ["kr", "en"].map((language) => {
+        const localized = getLocalizedCard(card, language);
+        const qrUrl = buildQrUrl(card, language);
+        const logoMarkup = `<img src="./assets/snu-horizontal-logo.png" alt="서울대학교 가로형 로고">`;
+
+        return `
+        <article class="${theme.className} sample-card" data-language="${language}">
+          <div class="sample-card-body">
+            <div class="sample-brand">
+              <div class="sample-badge">
+                ${logoMarkup}
+              </div>
+              <div class="sample-brand-copy">
+                <strong>SEOUL NATIONAL UNIVERSITY</strong>
+                <span>${escapeHtml(localized.org)}</span>
+              </div>
+            </div>
+            <div class="sample-main">
+              <div class="sample-person">
+                <h3>${escapeHtml(localized.name)}</h3>
+                <p class="sample-secondary-name">${escapeHtml(localized.secondaryName)}</p>
+                <p class="sample-title">${escapeHtml(localized.title)}</p>
+                <p class="sample-summary">${escapeHtml(localized.summary)}</p>
+              </div>
+              <div class="sample-qr-wrap">
+                <img src="${escapeHtml(qrUrl)}" alt="명함 QR">
+              </div>
+            </div>
+            <div class="sample-divider"></div>
+            <div class="sample-contact">
+              <p><strong>T</strong> ${escapeHtml(card.phone_office || "-")}</p>
+              <p><strong>M</strong> ${escapeHtml(card.phone_mobile)}</p>
+              <p><strong>E</strong> ${escapeHtml(card.email)}</p>
+              <p><strong>W</strong> ${escapeHtml(card.website || "-")}</p>
+            </div>
+            <div class="sample-address">${escapeHtml(localized.address)}</div>
+            <div class="sample-footer-line">${escapeHtml(theme.footer)}</div>
+          </div>
+        </article>
+      `;
+      }).join("");
 
       return `
-      <article class="${theme.className}" data-language="${language}">
-        <div class="sample-card-body">
-          <div class="sample-brand">
-            <div class="sample-badge">
-              ${logoMarkup}
-            </div>
-            <div class="sample-brand-copy">
-              <strong>SEOUL NATIONAL UNIVERSITY</strong>
-              <span>${escapeHtml(localized.org)}</span>
-            </div>
-          </div>
-          <div class="sample-main">
-            <div class="sample-person">
-              <h3>${escapeHtml(localized.name)}</h3>
-              <p class="sample-secondary-name">${escapeHtml(localized.secondaryName)}</p>
-              <p class="sample-title">${escapeHtml(localized.title)}</p>
-              <p class="sample-summary">${escapeHtml(localized.summary)}</p>
-            </div>
-            <div class="sample-qr-wrap">
-              <img src="${escapeHtml(qrUrl)}" alt="명함 QR">
-            </div>
-          </div>
-          <div class="sample-divider"></div>
-          <div class="sample-contact">
-            <p><strong>T</strong> ${escapeHtml(card.phone_office || "-")}</p>
-            <p><strong>M</strong> ${escapeHtml(card.phone_mobile)}</p>
-            <p><strong>E</strong> ${escapeHtml(card.email)}</p>
-            <p><strong>W</strong> ${escapeHtml(card.website || "-")}</p>
-          </div>
-          <div class="sample-address">${escapeHtml(localized.address)}</div>
-          <div class="sample-footer-line">${escapeHtml(theme.footer)}</div>
+      <section class="sample-pair" data-sample-key="${escapeHtml(theme.key)}">
+        <div class="sample-pair-cards">
+          ${pairMarkup}
         </div>
         <div class="sample-actions">
-          <button class="button secondary sample-save-button" type="button" data-sample-key="${escapeHtml(theme.key)}-${language}">${isEnglish ? "Save This Card" : "이 시안 저장"}</button>
+          <button class="button secondary sample-save-button" type="button" data-sample-key="${escapeHtml(theme.key)}">국문+영문 한 번에 저장</button>
         </div>
-      </article>
+      </section>
     `;
-    }).join("")).join("");
+    }).join("");
   }
 
   async function saveSampleCard(button) {
-    const cardNode = button.closest(".sample-card");
+    const cardNode = button.closest(".sample-pair");
     if (!cardNode) return;
 
     if (!window.html2canvas) {
