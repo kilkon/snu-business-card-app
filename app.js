@@ -4,8 +4,7 @@
 
   const views = {
     form: document.getElementById("formView"),
-    result: document.getElementById("resultView"),
-    choice: document.getElementById("choiceView")
+    result: document.getElementById("resultView")
   };
 
   const form = document.getElementById("cardForm");
@@ -13,15 +12,14 @@
   const qrImage = document.getElementById("qrImage");
   const summaryBox = document.getElementById("summaryBox");
   const openChoiceLink = document.getElementById("openChoiceLink");
+  const showKrQr = document.getElementById("showKrQr");
+  const showEnQr = document.getElementById("showEnQr");
   const downloadKr = document.getElementById("downloadKr");
   const downloadEn = document.getElementById("downloadEn");
   const makeAnother = document.getElementById("makeAnother");
-  const choiceKr = document.getElementById("choiceKr");
-  const choiceEn = document.getElementById("choiceEn");
-  const choiceKrBtn = document.getElementById("choiceKrBtn");
-  const choiceEnBtn = document.getElementById("choiceEnBtn");
 
   let currentCard = null;
+  let currentQrLanguage = "kr";
 
   function setActiveView(name) {
     Object.entries(views).forEach(([key, node]) => {
@@ -143,9 +141,9 @@
     });
   }
 
-  function setResult(card) {
-    currentCard = card;
-    const shareUrl = makeAppUrl("id", card.contact_id);
+  function renderQrForLanguage(card, language) {
+    currentQrLanguage = language;
+    const shareUrl = makeLanguageUrl(card.contact_id, language);
     qrImage.innerHTML = "";
     if (window.QRCode) {
       new window.QRCode(qrImage, {
@@ -161,21 +159,19 @@
       qrImage.appendChild(fallbackImage);
     }
     openChoiceLink.href = shareUrl;
+    showKrQr.classList.toggle("ghost", language !== "kr");
+    showEnQr.classList.toggle("ghost", language !== "en");
+  }
+
+  function setResult(card) {
+    currentCard = card;
+    renderQrForLanguage(card, currentQrLanguage);
     summaryBox.innerHTML = [
       `<strong>국문</strong><br>${card.name_kr} / ${card.title_kr} / ${card.org_kr}`,
       `<br><br><strong>영문</strong><br>${card.name_en} / ${card.title_en} / ${card.org_en}`,
       `<br><br><strong>연락처</strong><br>${card.phone_mobile} / ${card.phone_office || "-"} / ${card.email}`
     ].join("");
     setActiveView("result");
-  }
-
-  function setChoice(card) {
-    currentCard = card;
-    choiceKr.innerHTML = `${card.name_kr}<br>${card.title_kr}<br>${card.org_kr}<br>${card.phone_mobile} / ${card.email}`;
-    choiceEn.innerHTML = `${card.name_en}<br>${card.title_en}<br>${card.org_en}<br>${card.phone_mobile} / ${card.email}`;
-    choiceKrBtn.href = makeLanguageUrl(card.contact_id, "kr");
-    choiceEnBtn.href = makeLanguageUrl(card.contact_id, "en");
-    setActiveView("choice");
   }
 
   function buildPayload(formData) {
@@ -229,8 +225,8 @@
     loadCardById(contactId)
       .then((card) => {
         setResult(card);
-        setChoice(card);
         if (langValue === "kr" || langValue === "en") {
+          currentQrLanguage = langValue;
           window.setTimeout(() => {
             downloadVcard(card, langValue);
           }, 120);
@@ -247,8 +243,11 @@
   form.addEventListener("submit", handleSubmit);
   downloadKr.addEventListener("click", () => currentCard && downloadVcard(currentCard, "kr"));
   downloadEn.addEventListener("click", () => currentCard && downloadVcard(currentCard, "en"));
+  showKrQr.addEventListener("click", () => currentCard && renderQrForLanguage(currentCard, "kr"));
+  showEnQr.addEventListener("click", () => currentCard && renderQrForLanguage(currentCard, "en"));
   makeAnother.addEventListener("click", () => {
     currentCard = null;
+    currentQrLanguage = "kr";
     window.history.pushState({}, "", getBaseUrl());
     form.reset();
     setActiveView("form");

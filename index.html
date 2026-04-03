@@ -82,10 +82,14 @@
       <div class="result-grid">
         <div>
           <h2>QR 생성 완료</h2>
-          <p class="muted">이 QR을 스캔하면 국문 또는 영문 연락처 저장 중 하나를 선택할 수 있습니다.</p>
+          <p class="muted">이 QR을 스캔하면 바로 VCF 저장이 시작됩니다. 아래에서 국문용 또는 영문용 QR로 바꿀 수 있습니다.</p>
+          <div class="button-row">
+            <button id="showKrQr" class="button primary" type="button">국문 직접 저장 QR</button>
+            <button id="showEnQr" class="button secondary" type="button">영문 직접 저장 QR</button>
+          </div>
           <div id="qrImage" class="qr-image" aria-label="QR code"></div>
           <div class="button-row">
-            <a id="openChoiceLink" class="button primary" target="_blank" rel="noreferrer">선택 페이지 열기</a>
+            <a id="openChoiceLink" class="button ghost" target="_blank" rel="noreferrer">현재 QR 링크 열기</a>
           </div>
         </div>
         <div>
@@ -100,27 +104,6 @@
       </div>
     </section>
 
-    <section id="choiceView" class="choice-shell view">
-      <div class="choice-panel">
-        <h2>어떤 명함을 저장하시겠습니까?</h2>
-        <p class="muted light">원하는 언어를 선택하면 연락처 파일이 다운로드되고, 휴대폰에서 열어 주소록에 저장할 수 있습니다.</p>
-        <div class="choice-grid">
-          <article class="choice-card">
-            <h3>국문 명함</h3>
-            <div id="choiceKr" class="choice-copy"></div>
-            <a id="choiceKrBtn" class="button primary" href="#">국문 연락처 저장</a>
-          </article>
-          <article class="choice-card">
-            <h3>English Card</h3>
-            <div id="choiceEn" class="choice-copy"></div>
-            <a id="choiceEnBtn" class="button secondary" href="#">Save English Contact</a>
-          </article>
-        </div>
-        <div class="button-row">
-          <a id="backHomeLink" class="button ghost" href="./">생성 화면으로 돌아가기</a>
-        </div>
-      </div>
-    </section>
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
