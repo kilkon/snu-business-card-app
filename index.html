@@ -13,9 +13,7 @@
         <p class="eyebrow">GitHub Pages + Browser Only</p>
         <h1>서울대 구성원 QR 명함 생성기 by Kilkon Ko</h1>
         <p class="hero-copy">
-          사용자가 국문·영문 명함 정보를 입력하면 QR 링크가 생성되고,
-          QR을 스캔한 사람은 국문 연락처 저장 또는 영문 연락처 저장을 할 수 있습니다.
-          해당 QR을 저장해두시고 보여주시면 됩니다. 
+          입력한 정보를 바탕으로 연락처 QR을 만들고, 그 QR이 삽입된 서울대학교 UI 스타일 전자명함 시안을 여러 가지 색상과 레이아웃으로 확인할 수 있습니다.
         </p>
       </div>
       <div class="hero-pills">
@@ -66,14 +64,14 @@
             <input name="address_en" value="1 Gwanak-ro, Gwanak-gu, Seoul 08826, Republic of Korea">
           </label>
           <label class="full">국문 소개
-            <textarea name="summary_kr">공공문제를 데이터와 정책분석으로 해결합니다.서울대의 AX를 만들어갑니다.</textarea>
+            <textarea name="summary_kr">공공문제를 데이터와 정책분석으로 해결합니다. 서울대의 AX를 만들어갑니다.</textarea>
           </label>
           <label class="full">영문 소개
             <textarea name="summary_en">Solving public problems with data and policy analysis.</textarea>
           </label>
           <div class="full">
             <button type="submit">QR 명함 생성</button>
-            <p id="saveNotice" class="hint">입력 정보는 이 브라우저 화면에서만 QR과 VCF 생성에 사용됩니다.</p>
+            <p id="saveNotice" class="hint">입력 정보는 브라우저 화면 안에서만 QR과 VCF를 만드는 데 사용됩니다.</p>
           </div>
         </form>
       </div>
@@ -83,7 +81,7 @@
       <div class="result-grid">
         <div>
           <h2>QR 생성 완료</h2>
-          <p class="muted">이 QR은 연락처 정보 자체를 담고 있습니다. 휴대폰으로 스캔하면 연락처 추가 화면이 바로 열리도록 맞췄습니다.</p>
+          <p class="muted">이 QR은 연락처 정보 자체를 담고 있습니다. 휴대폰 기본 카메라로 스캔하면 연락처 추가 흐름으로 이어지도록 구성했습니다.</p>
           <div class="button-row">
             <button id="showKrQr" class="button primary" type="button">국문 연락처 QR</button>
             <button id="showEnQr" class="button secondary" type="button">영문 연락처 QR</button>
@@ -94,14 +92,26 @@
             <span id="qrModeLabel" class="hint">현재: 국문 연락처 QR</span>
           </div>
         </div>
+
         <div>
           <h2>연락처 저장 파일</h2>
           <div id="summaryBox" class="summary-box"></div>
           <div class="button-row stack">
+            <button id="buildSamples" class="button primary" type="button">명함 만들기</button>
             <button id="downloadKr" class="button primary" type="button">국문 VCF 다운로드</button>
             <button id="downloadEn" class="button secondary" type="button">영문 VCF 다운로드</button>
             <button id="makeAnother" class="button ghost" type="button">다시 만들기</button>
           </div>
+        </div>
+
+        <div class="business-card-panel">
+          <div class="business-card-header">
+            <div>
+              <h2>서울대 UI 명함 시안</h2>
+              <p class="muted">명함 만들기 버튼을 누르면 입력한 정보와 현재 선택된 QR을 바탕으로 다양한 색상과 디자인의 전자명함 샘플이 생성됩니다.</p>
+            </div>
+          </div>
+          <div id="businessCardGallery" class="business-card-gallery"></div>
         </div>
       </div>
     </section>
