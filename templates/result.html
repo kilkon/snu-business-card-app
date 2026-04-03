@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR 생성 완료</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Malgun Gothic", sans-serif;
+      background: linear-gradient(180deg, #f7f9fe 0%, #edf3fb 100%);
+      color: #20242d;
+    }
+    .wrap {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 20px;
+    }
+    .panel {
+      background: #fff;
+      border: 1px solid rgba(20, 33, 61, 0.08);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: 0 12px 34px rgba(18, 28, 45, 0.08);
+    }
+    h1, h2 { color: #1e2d78; }
+    h1 { margin: 0 0 12px; }
+    h2 { margin: 0 0 14px; font-size: 22px; }
+    p, li {
+      color: #5d6b80;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+    .qr {
+      width: 100%;
+      max-width: 340px;
+      border-radius: 20px;
+      background: #fff;
+      display: block;
+      margin: 0 auto 16px;
+    }
+    .link-box {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #f3f6fd;
+      word-break: break-all;
+      font-size: 13px;
+      color: #27408b;
+    }
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    a.button {
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    a.primary {
+      background: #1e2d78;
+      color: #fff;
+    }
+    a.secondary {
+      background: #d9c27b;
+      color: #1e2d78;
+    }
+    .meta-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .meta-list div {
+      padding: 12px 14px;
+      border: 1px solid rgba(20, 33, 61, 0.08);
+      border-radius: 14px;
+      background: #fff;
+      color: #33435f;
+      font-size: 14px;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="panel" style="margin-bottom:20px;">
+      <h1>QR 명함이 생성되었습니다</h1>
+      <p>{{ contact.name_kr }} / {{ contact.name_en }}님의 선택형 QR 링크가 만들어졌습니다. QR을 스캔한 사람은 국문 명함 저장 또는 영문 명함 저장을 직접 고를 수 있습니다.</p>
+    </div>
+    <section class="grid">
+      <div class="panel">
+        <h2>QR 이미지</h2>
+        <img class="qr" src="{{ qr_url }}" alt="QR code">
+        <div class="link-box">{{ chooser_url }}</div>
+        <div class="button-row">
+          <a class="button primary" href="{{ chooser_url }}" target="_blank" rel="noreferrer">선택 페이지 열기</a>
+          <a class="button secondary" href="{{ qr_url }}" target="_blank" rel="noreferrer">QR 이미지 열기</a>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>생성된 연락처</h2>
+        <div class="meta-list">
+          <div><strong>국문</strong><br>{{ contact.name_kr }} / {{ contact.title_kr }} / {{ contact.org_kr }}</div>
+          <div><strong>영문</strong><br>{{ contact.name_en }} / {{ contact.title_en }} / {{ contact.org_en }}</div>
+          <div><strong>연락처</strong><br>{{ contact.phone_mobile }} / {{ contact.phone_office }} / {{ contact.email }}</div>
+        </div>
+        <div class="button-row">
+          <a class="button primary" href="{{ url_for('download_vcf', contact_id=contact_id, language='kr') }}">국문 VCF 다운로드</a>
+          <a class="button secondary" href="{{ url_for('download_vcf', contact_id=contact_id, language='en') }}">영문 VCF 다운로드</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
