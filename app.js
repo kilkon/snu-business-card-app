@@ -237,12 +237,16 @@
   }
 
   function renderBusinessCardSamples(card) {
-    const localized = getLocalizedCard(card, currentQrLanguage);
-    const qrUrl = buildQrUrl(card, currentQrLanguage);
-    const logoMarkup = `<img src="./assets/snu-horizontal-logo.png" alt="서울대학교 가로형 로고">`;
+    businessCardGallery.innerHTML = sampleThemes.map((theme) => ["kr", "en"].map((language) => {
+      const localized = getLocalizedCard(card, language);
+      const qrUrl = buildQrUrl(card, language);
+      const isEnglish = language === "en";
+      const logoMarkup = isEnglish
+        ? `<img src="./assets/snu-english-logo.png" alt="Seoul National University English logo">`
+        : `<img src="./assets/snu-horizontal-logo.png" alt="서울대학교 가로형 로고">`;
 
-    businessCardGallery.innerHTML = sampleThemes.map((theme) => `
-      <article class="${theme.className}">
+      return `
+      <article class="${theme.className}" data-language="${language}">
         <div class="sample-card-body">
           <div class="sample-brand">
             <div class="sample-badge">
@@ -275,10 +279,11 @@
           <div class="sample-footer-line">${escapeHtml(theme.footer)}</div>
         </div>
         <div class="sample-actions">
-          <button class="button secondary sample-save-button" type="button" data-sample-key="${escapeHtml(theme.key)}">이 시안 저장</button>
+          <button class="button secondary sample-save-button" type="button" data-sample-key="${escapeHtml(theme.key)}-${language}">${isEnglish ? "Save This Card" : "이 시안 저장"}</button>
         </div>
       </article>
-    `).join("");
+    `;
+    }).join("")).join("");
   }
 
   async function saveSampleCard(button) {
@@ -306,7 +311,7 @@
       const dataUrl = canvas.toDataURL("image/png");
       const anchor = document.createElement("a");
       anchor.href = dataUrl;
-      anchor.download = `${key}-${currentQrLanguage}.png`;
+      anchor.download = `${key}.png`;
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
