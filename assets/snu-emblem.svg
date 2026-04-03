@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-labelledby="title desc">
+  <title id="title">Seoul National University emblem style mark</title>
+  <desc id="desc">A blue seal-like emblem with laurel branches, shield, and motto text.</desc>
+  <rect width="140" height="140" rx="4" fill="#ffffff"/>
+  <g fill="none" stroke="#24398d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M31 108c-12-12-19-29-19-47 0-5 1-11 2-16"/>
+    <path d="M23 38c5-10 13-18 23-24"/>
+    <path d="M109 108c12-12 19-29 19-47 0-5-1-11-2-16"/>
+    <path d="M117 38c-5-10-13-18-23-24"/>
+    <path d="M27 94c6 7 14 12 22 16"/>
+    <path d="M26 81c7 6 14 10 22 13"/>
+    <path d="M27 68c6 5 12 9 19 12"/>
+    <path d="M31 55c5 5 10 9 16 11"/>
+    <path d="M113 94c-6 7-14 12-22 16"/>
+    <path d="M114 81c-7 6-14 10-22 13"/>
+    <path d="M113 68c-6 5-12 9-19 12"/>
+    <path d="M109 55c-5 5-10 9-16 11"/>
+  </g>
+  <g transform="translate(44 18)">
+    <path d="M26 0l15 12v35c0 22-11 35-26 45C0 82-11 69-11 47V12L4 0z" fill="#24398d"/>
+    <path d="M15 16h22" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M15 27h22" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M15 38h22" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M26 11v36" stroke="#ffffff" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M10 52h32" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <path d="M46 8l11 11" stroke="#24398d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M6 8L-5 19" stroke="#24398d" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <g font-family="Georgia, serif" fill="#24398d" font-weight="700" text-anchor="middle">
+    <text x="70" y="93" font-size="10.5">VERI</text>
+    <text x="70" y="104" font-size="10.5">LUX</text>
+    <text x="70" y="115" font-size="10.5">TAS MEA</text>
+  </g>
+</svg>
