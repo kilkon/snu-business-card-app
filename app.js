@@ -11,10 +11,8 @@
   const form = document.getElementById("cardForm");
   const saveNotice = document.getElementById("saveNotice");
   const qrImage = document.getElementById("qrImage");
-  const shareUrlNode = document.getElementById("shareUrl");
   const summaryBox = document.getElementById("summaryBox");
   const openChoiceLink = document.getElementById("openChoiceLink");
-  const copyShareLink = document.getElementById("copyShareLink");
   const downloadKr = document.getElementById("downloadKr");
   const downloadEn = document.getElementById("downloadEn");
   const makeAnother = document.getElementById("makeAnother");
@@ -150,7 +148,6 @@
     const shareUrl = makeAppUrl("id", card.contact_id);
     const qrSrc = `${config.qrApiBase}${encodeURIComponent(shareUrl)}`;
     qrImage.src = qrSrc;
-    shareUrlNode.textContent = shareUrl;
     openChoiceLink.href = shareUrl;
     summaryBox.innerHTML = [
       `<strong>국문</strong><br>${card.name_kr} / ${card.title_kr} / ${card.org_kr}`,
@@ -236,16 +233,6 @@
   }
 
   form.addEventListener("submit", handleSubmit);
-  copyShareLink.addEventListener("click", async () => {
-    if (!currentCard) return;
-    const shareUrl = makeAppUrl("id", currentCard.contact_id);
-    await navigator.clipboard.writeText(shareUrl);
-    copyShareLink.textContent = "복사 완료";
-    window.setTimeout(() => {
-      copyShareLink.textContent = "링크 복사";
-    }, 1500);
-  });
-
   downloadKr.addEventListener("click", () => currentCard && downloadVcard(currentCard, "kr"));
   downloadEn.addEventListener("click", () => currentCard && downloadVcard(currentCard, "en"));
   makeAnother.addEventListener("click", () => {
