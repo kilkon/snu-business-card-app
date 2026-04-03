@@ -11,7 +11,7 @@
   const saveNotice = document.getElementById("saveNotice");
   const qrImage = document.getElementById("qrImage");
   const summaryBox = document.getElementById("summaryBox");
-  const openChoiceLink = document.getElementById("openChoiceLink");
+  const qrModeLabel = document.getElementById("qrModeLabel");
   const showKrQr = document.getElementById("showKrQr");
   const showEnQr = document.getElementById("showEnQr");
   const downloadKr = document.getElementById("downloadKr");
@@ -63,6 +63,15 @@
       .replace(/;/g, "\\;");
   }
 
+  function escapeMeCard(value) {
+    return String(value || "")
+      .replace(/\\/g, "")
+      .replace(/:/g, "")
+      .replace(/;/g, "")
+      .replace(/"/g, "")
+      .trim();
+  }
+
   function buildVcard(card, language) {
     const useEn = language === "en";
     const fullName = useEn ? (card.name_en || card.name_kr) : (card.name_kr || card.name_en);
@@ -89,6 +98,28 @@
     if (note) lines.push(`NOTE:${escapeVcard(note)}`);
     lines.push("END:VCARD");
     return lines.join("\n");
+  }
+
+  function buildMeCard(card, language) {
+    const useEn = language === "en";
+    const fullName = useEn ? (card.name_en || card.name_kr) : (card.name_kr || card.name_en);
+    const org = useEn ? (card.org_en || card.org_kr) : (card.org_kr || card.org_en);
+    const title = useEn ? (card.title_en || card.title_kr) : (card.title_kr || card.title_en);
+    const address = useEn ? (card.address_en || card.address_kr) : (card.address_kr || card.address_en);
+    const website = normalizeWebsite(card.website || "");
+    const note = title && org ? `${title}, ${org}` : (title || org);
+
+    const chunks = [
+      `N:${escapeMeCard(fullName)}`,
+      `TEL:${escapeMeCard(card.phone_mobile)}`,
+      card.phone_office ? `TEL:${escapeMeCard(card.phone_office)}` : "",
+      card.email ? `EMAIL:${escapeMeCard(card.email)}` : "",
+      website ? `URL:${escapeMeCard(website)}` : "",
+      address ? `ADR:${escapeMeCard(address)}` : "",
+      note ? `NOTE:${escapeMeCard(note)}` : ""
+    ].filter(Boolean);
+
+    return `MECARD:${chunks.join(";")};;`;
   }
 
   function downloadVcard(card, language) {
@@ -143,11 +174,11 @@
 
   function renderQrForLanguage(card, language) {
     currentQrLanguage = language;
-    const shareUrl = makeLanguageUrl(card.contact_id, language);
+    const qrPayload = buildMeCard(card, language);
     qrImage.innerHTML = "";
     if (window.QRCode) {
       new window.QRCode(qrImage, {
-        text: shareUrl,
+        text: qrPayload,
         width: 320,
         height: 320,
         correctLevel: window.QRCode.CorrectLevel.M
@@ -155,10 +186,10 @@
     } else {
       const fallbackImage = document.createElement("img");
       fallbackImage.alt = "QR code";
-      fallbackImage.src = `${config.qrApiBase}${encodeURIComponent(shareUrl)}`;
+      fallbackImage.src = `${config.qrApiBase}${encodeURIComponent(qrPayload)}`;
       qrImage.appendChild(fallbackImage);
     }
-    openChoiceLink.href = shareUrl;
+    qrModeLabel.textContent = language === "kr" ? "현재: 국문 연락처 QR" : "현재: 영문 연락처 QR";
     showKrQr.classList.toggle("ghost", language !== "kr");
     showEnQr.classList.toggle("ghost", language !== "en");
   }
@@ -214,30 +245,7 @@
 
   function handleRoute() {
     const params = new URLSearchParams(window.location.search);
-    const contactId = params.get("id");
-    const langValue = params.get("lang");
-
-    if (!contactId) {
-      setActiveView("form");
-      return;
-    }
-
-    loadCardById(contactId)
-      .then((card) => {
-        setResult(card);
-        if (langValue === "kr" || langValue === "en") {
-          currentQrLanguage = langValue;
-          window.setTimeout(() => {
-            downloadVcard(card, langValue);
-          }, 120);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        choiceKr.innerHTML = "명함 정보를 불러오지 못했습니다.";
-        choiceEn.innerHTML = "Please try again later.";
-        setActiveView("choice");
-      });
+    setActiveView("form");
   }
 
   form.addEventListener("submit", handleSubmit);
