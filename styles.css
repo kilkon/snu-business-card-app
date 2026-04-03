@@ -34,24 +34,21 @@ body {
   padding: 28px;
   box-shadow: 0 22px 50px rgba(16, 25, 51, 0.18);
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1.15fr) minmax(220px, 0.85fr);
   gap: 20px;
-  align-items: start;
+  align-items: center;
 }
 
 .hero-logo {
-  display: inline-flex;
+  display: flex;
+  justify-content: flex-end;
   align-items: center;
-  margin-bottom: 18px;
-  padding: 10px 14px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 10px 24px rgba(11, 20, 52, 0.16);
+  margin-bottom: 0;
 }
 
 .hero-logo img {
   display: block;
-  width: min(100%, 360px);
+  width: min(100%, 240px);
   height: auto;
 }
 
@@ -588,6 +585,15 @@ button {
   .form-grid,
   .result-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-logo {
+    justify-content: flex-start;
+    margin-bottom: 6px;
+  }
+
+  .hero-logo img {
+    width: min(100%, 220px);
   }
 
   .hero-pills {
