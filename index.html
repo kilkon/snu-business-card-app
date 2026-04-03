@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SNU QR 명함 생성기</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">GitHub Pages + Google Sheets</p>
+        <h1>서울대 교수형 QR 명함 생성기</h1>
+        <p class="hero-copy">
+          사용자가 국문·영문 명함 정보를 입력하면 QR 링크가 생성되고,
+          QR을 스캔한 사람은 국문 연락처 저장 또는 영문 연락처 저장을 선택할 수 있습니다.
+        </p>
+      </div>
+      <div class="hero-pills">
+        <span>정적 사이트</span>
+        <span>Google Sheets 저장</span>
+        <span>VCF 다운로드</span>
+      </div>
+    </section>
+
+    <section id="formView" class="layout view active">
+      <div class="panel">
+        <h2>디자인 유형 분류</h2>
+        <div class="type-grid">
+          <article class="type-card">
+            <strong>공식 기관형</strong>
+            <p>서울대 UI 가이드의 기본 가로형처럼 기관 시그니처와 위계를 안정적으로 보여주는 유형입니다.</p>
+            <a href="https://identity.snu.ac.kr/ui/3/1" target="_blank" rel="noreferrer">공식 UI 가이드</a>
+          </article>
+          <article class="type-card">
+            <strong>교수 연락처형</strong>
+            <p>실제 교수 소개 페이지처럼 이름, 직위, 연구실, 전화, 이메일을 빠르게 읽히게 정리한 유형입니다.</p>
+            <a href="https://gsis.snu.ac.kr/%EA%B5%90%EC%88%98%EC%A7%84-%EB%AA%A9%EB%A1%9D/" target="_blank" rel="noreferrer">SNU GSIS 교수진</a>
+          </article>
+          <article class="type-card">
+            <strong>세로형·행사용</strong>
+            <p>좁은 폭의 모바일 화면과 행사 QR 포스터에 잘 맞는 세로 비율 명함 유형입니다.</p>
+            <a href="https://identity.snu.ac.kr/webdata/uploads/identity/image/2021/06/5-6-8.png" target="_blank" rel="noreferrer">세로형 예시</a>
+          </article>
+          <article class="type-card">
+            <strong>영문 우선 글로벌형</strong>
+            <p>영문 이름, 영문 소속, 국제 표기 연락처를 먼저 보여 해외 연구자에게 읽히기 쉬운 유형입니다.</p>
+            <a href="https://enchem.snu.ac.kr/professor/" target="_blank" rel="noreferrer">영문 프로필 예시</a>
+          </article>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>명함 만들기</h2>
+        <form id="cardForm" class="form-grid">
+          <label>국문 이름
+            <input name="name_kr" value="홍길동" required>
+          </label>
+          <label>영문 이름
+            <input name="name_en" value="Hong Gil-dong" required>
+          </label>
+          <label>국문 직함
+            <input name="title_kr" value="행정대학원 교수" required>
+          </label>
+          <label>영문 직함
+            <input name="title_en" value="Professor, Graduate School of Public Administration" required>
+          </label>
+          <label class="full">국문 소속
+            <input name="org_kr" value="서울대학교 행정대학원" required>
+          </label>
+          <label class="full">영문 소속
+            <input name="org_en" value="Graduate School of Public Administration, Seoul National University" required>
+          </label>
+          <label>휴대전화
+            <input name="phone_mobile" value="010-1234-5678" required>
+          </label>
+          <label>사무실 전화
+            <input name="phone_office" value="+82-2-880-1371">
+          </label>
+          <label>이메일
+            <input name="email" type="email" value="hong@example.com" required>
+          </label>
+          <label>웹사이트
+            <input name="website" value="gspa.snu.ac.kr">
+          </label>
+          <label class="full">국문 주소
+            <input name="address_kr" value="08826 서울시 관악구 관악로 1">
+          </label>
+          <label class="full">영문 주소
+            <input name="address_en" value="1 Gwanak-ro, Gwanak-gu, Seoul 08826, Republic of Korea">
+          </label>
+          <label class="full">국문 소개
+            <textarea name="summary_kr">공공문제를 데이터와 정책분석으로 해결합니다.</textarea>
+          </label>
+          <label class="full">영문 소개
+            <textarea name="summary_en">Solving public problems with data and policy analysis.</textarea>
+          </label>
+          <div class="full">
+            <button type="submit">QR 명함 생성</button>
+            <p id="saveNotice" class="hint">Google Sheets 저장 주소가 설정되어 있으면 생성 시 시트에도 기록됩니다.</p>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="resultView" class="panel view">
+      <div class="result-grid">
+        <div>
+          <h2>QR 생성 완료</h2>
+          <p class="muted">이 QR은 선택 페이지를 가리킵니다. 스캔한 사람은 국문 또는 영문 연락처 저장을 고를 수 있습니다.</p>
+          <img id="qrImage" class="qr-image" alt="QR code">
+          <div id="shareUrl" class="link-box"></div>
+          <div class="button-row">
+            <a id="openChoiceLink" class="button primary" target="_blank" rel="noreferrer">선택 페이지 열기</a>
+            <button id="copyShareLink" class="button secondary" type="button">링크 복사</button>
+          </div>
+        </div>
+        <div>
+          <h2>연락처 저장 파일</h2>
+          <div id="summaryBox" class="summary-box"></div>
+          <div class="button-row stack">
+            <button id="downloadKr" class="button primary" type="button">국문 VCF 다운로드</button>
+            <button id="downloadEn" class="button secondary" type="button">영문 VCF 다운로드</button>
+            <button id="makeAnother" class="button ghost" type="button">다시 만들기</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="choiceView" class="choice-shell view">
+      <div class="choice-panel">
+        <h2>어떤 명함을 저장하시겠습니까?</h2>
+        <p class="muted light">원하는 언어를 선택하면 연락처 파일이 다운로드되고, 휴대폰에서 열어 주소록에 저장할 수 있습니다.</p>
+        <div class="choice-grid">
+          <article class="choice-card">
+            <h3>국문 명함</h3>
+            <div id="choiceKr" class="choice-copy"></div>
+            <button id="choiceKrBtn" class="button primary" type="button">국문 연락처 저장</button>
+          </article>
+          <article class="choice-card">
+            <h3>English Card</h3>
+            <div id="choiceEn" class="choice-copy"></div>
+            <button id="choiceEnBtn" class="button secondary" type="button">Save English Contact</button>
+          </article>
+        </div>
+        <div class="button-row">
+          <a id="backHomeLink" class="button ghost" href="./">생성 화면으로 돌아가기</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
